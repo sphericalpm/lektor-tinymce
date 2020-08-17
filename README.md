@@ -1,11 +1,14 @@
 # lektor-tinymce
-
 Lektor plugin for editing with the [TinyMCE text editor](https://www.tiny.cloud/features).
 
-To add an activation key, create the file `configs/tinymce.ini` in your project folder with the following contents:
+## Installation
+Install the plugin from pypi with one of the [standard ways](https://www.getlektor.com/docs/plugins/).
+
+## API key
+To add an API key, create the file `configs/tinymce.ini` in your lektor project folder with the following contents:
 
     [licence]
-    api-key = 'API_KEY'
+    api-key = 'YOUR_API_KEY_HERE'
 
-(replace API_KEY with the key)
-
+## License
+The plugin is distributed under the MIT license
