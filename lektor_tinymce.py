@@ -11,6 +11,9 @@ TEMPLATE = '''
   {{ super() }}
   <script src="https://cdn.tiny.cloud/1/{{tinymce_api_key}}/tinymce/4/tinymce.min.js" referrerpolicy="origin"></script>
   <script>
+    var valueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+    var inputEvent = new Event('input', { bubbles: true });
+    inputEvent.simulated = true;
     (new MutationObserver(function() {
         [...document.getElementsByTagName('textarea')].forEach(txt_elem => {
             if (txt_elem.className === 'form-control') {
@@ -21,11 +24,8 @@ TEMPLATE = '''
                     plugins: 'image link',
                     setup: function(editor) {
                         editor.on('Change', function(e) {
-                            txt_elem.value = editor.getContent();
-
-                            let ev = new Event('input', { bubbles: true });
-                            ev.simulated = true;
-                            txt_elem.dispatchEvent(ev);
+                            valueSetter.call(txt_elem, editor.getContent());
+                            txt_elem.dispatchEvent(inputEvent);
                         });
                     }
                 });
