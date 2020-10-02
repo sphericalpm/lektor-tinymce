@@ -27,7 +27,7 @@ setup(
 
     packages=find_packages(),
     py_modules=['lektor_tinymce'],
-    version='0.2',
+    version='0.3',
 
     classifiers=[
         'Framework :: Lektor',
