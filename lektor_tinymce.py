@@ -21,7 +21,8 @@ TEMPLATE = '''
                 tinymce.init({
                     target: txt_elem,
                     branding: false,
-                    plugins: 'image link',
+                    plugins: 'image link lists autoresize table',
+                    image_advtab: true,
                     setup: function(editor) {
                         editor.on('Change', function(e) {
                             valueSetter.call(txt_elem, editor.getContent());
@@ -66,4 +67,3 @@ class TinyMCEPlugin(Plugin):
         # ... and fill all the rules back with our wrapper template
         for path, endpoint in dash.endpoints:
             dash.bp.add_url_rule(path, endpoint, patched_endpoint)
-
