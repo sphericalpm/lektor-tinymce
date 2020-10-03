@@ -21,13 +21,13 @@ TEMPLATE = '''
                 txt_elem.classList.add('tinymce-attached');
                 tinymce.init({
                     target: txt_elem,
-                    {{ tinymce_settings|safe }}
                     setup: function(editor) {
                         editor.on('Change', function(e) {
                             valueSetter.call(txt_elem, editor.getContent());
                             txt_elem.dispatchEvent(inputEvent);
                         });
-                    }
+                    },
+                    {{ tinymce_settings|safe }}
                 });
             };
         });
