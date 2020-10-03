@@ -19,5 +19,7 @@ Here is the example of the settings string:
     [config]
     settings = "plugins: 'image link lists autoresize table', image_advtab: true,"
 
+Note that this string is passed directly into tinymce.init(), so it must follow the given format (and include the comma at the end!)
+Some plugins, such as image upload, may not be fully integrated with lektor by default.
 ## License
 The plugin is distributed under the MIT license
