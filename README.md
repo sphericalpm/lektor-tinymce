@@ -11,7 +11,7 @@ To add an API key, create the file `configs/tinymce.ini` in your lektor project 
     api-key = 'YOUR_API_KEY_HERE'
 
 ## Tiny MCE setting
-To past some settings params to the tinymce.init() (plugins for example), just add the following contents to the file `configs/tinymce.ini` in your lektor project folder:
+To pass additional arguments (such as a list of plugins) into [tinymce.init()](https://www.tiny.cloud/docs/configure/integration-and-setup/), just add the following contents to the file `configs/tinymce.ini` in your lektor project folder:
     [config]
     settings = 'YOUR_SETTINGS'
 
