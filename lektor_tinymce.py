@@ -5,6 +5,7 @@ from lektor.pluginsystem import Plugin
 
 
 KEY = ''
+TINYMCE_SETTINGS = ''
 TEMPLATE = '''
 {% extends "dash.html" %}
 {% block scripts %}
@@ -20,14 +21,13 @@ TEMPLATE = '''
                 txt_elem.classList.add('tinymce-attached');
                 tinymce.init({
                     target: txt_elem,
-                    branding: false,
-                    plugins: 'image link',
                     setup: function(editor) {
                         editor.on('Change', function(e) {
                             valueSetter.call(txt_elem, editor.getContent());
                             txt_elem.dispatchEvent(inputEvent);
                         });
-                    }
+                    },
+                    {{ tinymce_settings|safe }}
                 });
             };
         });
@@ -46,7 +46,8 @@ TEMPLATE = '''
 def patched_endpoint(*args, **kwargs):
     return render_template_string(
         TEMPLATE,
-        tinymce_api_key=KEY
+        tinymce_settings=TINYMCE_SETTINGS,
+        tinymce_api_key=KEY,
     )
 
 
@@ -56,8 +57,10 @@ class TinyMCEPlugin(Plugin):
 
     def on_setup_env(self, *args, **kwargs):
         global KEY
+        global TINYMCE_SETTINGS
         config = self.get_config()
         KEY = config.get('licence.api-key', 'no-api-key')
+        TINYMCE_SETTINGS = config.get('config.settings', '')
 
     def on_server_spawn(self, *args, **kwargs):
         # remove all rules except the first one which is edit redirect
@@ -66,4 +69,3 @@ class TinyMCEPlugin(Plugin):
         # ... and fill all the rules back with our wrapper template
         for path, endpoint in dash.endpoints:
             dash.bp.add_url_rule(path, endpoint, patched_endpoint)
-
