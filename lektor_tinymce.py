@@ -17,7 +17,7 @@ TEMPLATE = '''
     inputEvent.simulated = true;
     (new MutationObserver(function() {
         [...document.getElementsByTagName('textarea')].forEach(txt_elem => {
-            if (txt_elem.className === 'form-control') {
+            if (txt_elem.classList.contains('form-control')) {
                 txt_elem.classList.add('tinymce-attached');
                 tinymce.init({
                     target: txt_elem,
@@ -63,9 +63,14 @@ class TinyMCEPlugin(Plugin):
         TINYMCE_SETTINGS = config.get('config.settings', '')
 
     def on_server_spawn(self, *args, **kwargs):
-        # remove all rules except the first one which is edit redirect
-        while len(dash.bp.deferred_functions) > 1:
-            dash.bp.deferred_functions.pop()
-        # ... and fill all the rules back with our wrapper template
-        for path, endpoint in dash.endpoints:
-            dash.bp.add_url_rule(path, endpoint, patched_endpoint)
+        # look through deferred_functions in dash blueprint, find the one with
+        # route rule for admin views and replace it with patched function
+        for idx, item in enumerate(dash.bp.deferred_functions):
+            rule_idx = item.__code__.co_freevars.index('rule')
+            if rule_idx and item.__closure__[rule_idx].cell_contents == '/<view>':
+                dash.bp.deferred_functions[idx] = lambda s: s.add_url_rule(
+                    '/<view>',
+                    endpoint='app',
+                    view_func=patched_endpoint,
+                )
+                break
