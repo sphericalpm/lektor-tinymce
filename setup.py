@@ -38,5 +38,9 @@ setup(
         'lektor.plugins': [
             'tinymce = lektor_tinymce:TinyMCEPlugin',
         ]
-    }
+    },
+
+    install_requires=[
+        'lektor>=3.3.6,<3.4',
+    ],
 )
