@@ -4,6 +4,11 @@ Lektor plugin for editing with the [TinyMCE text editor](https://www.tiny.cloud/
 ## Installation
 Install the plugin from pypi with one of the [standard ways](https://www.getlektor.com/docs/plugins/).
 
+## Compatibility
+This plugin uses non-api mechanisms in Lektor/Flask to inject its own code into admin jinja template.
+Due to frequent change in Lektor admin backend code, each version of this plugin shall most likely be compatible with specific version of Lektor.
+Currently it is compatible with Lektor [3.3.6](https://github.com/lektor/lektor/releases/tag/v3.3.6)
+
 ## API key
 To add an API key, create the file `configs/tinymce.ini` in your lektor project folder with the following contents:
 
