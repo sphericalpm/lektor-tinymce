@@ -18,6 +18,9 @@ TEMPLATE = '''
     (new MutationObserver(function() {
         [...document.getElementsByTagName('textarea')].forEach(txt_elem => {
             if (txt_elem.classList.contains('form-control')) {
+                if(txt_elem.previousElementSibling.classList.contains('text-widget__replica')) {
+                    txt_elem.previousElementSibling.style.display = "none";
+                }
                 txt_elem.classList.add('tinymce-attached');
                 tinymce.init({
                     target: txt_elem,
