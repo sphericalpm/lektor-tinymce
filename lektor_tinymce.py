@@ -6,6 +6,7 @@ from lektor.pluginsystem import Plugin
 
 KEY = ''
 TINYMCE_SETTINGS = ''
+TARGET_LABELS = []
 TEMPLATE = '''
 {% extends "dash.html" %}
 {% block scripts %}
@@ -15,9 +16,20 @@ TEMPLATE = '''
     var valueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
     var inputEvent = new Event('input', { bubbles: true });
     inputEvent.simulated = true;
-    (new MutationObserver(function() {
+
+    function initEditors() {
         [...document.getElementsByTagName('textarea')].forEach(txt_elem => {
             if (txt_elem.classList.contains('form-control')) {
+                if({{ target_labels|safe }}) {
+                    let elem = txt_elem.closest('dl.field');
+                    if(!elem) {
+                        return;
+                    };
+                    elem = elem.querySelector('dt');
+                    if(!elem || !{{ target_labels|safe }}.includes(elem.innerHTML)) {
+                        return;
+                    };
+                };
                 if(txt_elem.previousElementSibling.classList.contains('text-widget__replica')) {
                     txt_elem.previousElementSibling.style.display = "none";
                 }
@@ -34,6 +46,10 @@ TEMPLATE = '''
                 });
             };
         });
+    };
+
+    (new MutationObserver(function() {
+        initEditors();
     })).observe(
         document.getElementsByTagName('body')[0],
         {
@@ -41,6 +57,9 @@ TEMPLATE = '''
             childList: true
         },
     );
+    window.navigation.addEventListener('navigate', (event) => {
+        window.location.href = event.destination.url;
+    });
   </script>
 {% endblock %}
 '''
@@ -50,6 +69,7 @@ def patched_endpoint(*args, **kwargs):
     return render_template_string(
         TEMPLATE,
         tinymce_settings=TINYMCE_SETTINGS,
+        target_labels=TARGET_LABELS,
         tinymce_api_key=KEY,
     )
 
@@ -66,9 +86,11 @@ class TinyMCEPlugin(Plugin):
     def on_setup_env(self, *args, **kwargs):
         global KEY
         global TINYMCE_SETTINGS
+        global TARGET_LABELS
         config = self.get_config()
         KEY = config.get('licence.api-key', 'no-api-key')
         TINYMCE_SETTINGS = config.get('config.settings', '')
+        TARGET_LABELS = config.get('config.targets', [])
 
     def on_server_spawn(self, *args, **kwargs):
         # look through deferred_functions in dash blueprint, find the one with
