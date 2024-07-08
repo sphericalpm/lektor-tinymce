@@ -7,6 +7,7 @@ from lektor.pluginsystem import Plugin
 KEY = ''
 TINYMCE_SETTINGS = ''
 TARGET_LABELS = []
+FORCE_REFRESH = 'false'
 TEMPLATE = '''
 {% extends "dash.html" %}
 {% block scripts %}
@@ -57,9 +58,12 @@ TEMPLATE = '''
             childList: true
         },
     );
-    window.navigation.addEventListener('navigate', (event) => {
-        window.location.href = event.destination.url;
-    });
+
+    if ({{ force_refresh|safe }} === true) {
+        window.navigation.addEventListener('navigate', (event) => {
+            window.location.href = event.destination.url;
+        });
+    };
   </script>
 {% endblock %}
 '''
@@ -70,6 +74,7 @@ def patched_endpoint(*args, **kwargs):
         TEMPLATE,
         tinymce_settings=TINYMCE_SETTINGS,
         target_labels=TARGET_LABELS,
+        force_refresh=FORCE_REFRESH,
         tinymce_api_key=KEY,
     )
 
@@ -87,10 +92,12 @@ class TinyMCEPlugin(Plugin):
         global KEY
         global TINYMCE_SETTINGS
         global TARGET_LABELS
+        global FORCE_REFRESH
         config = self.get_config()
         KEY = config.get('licence.api-key', 'no-api-key')
         TINYMCE_SETTINGS = config.get('config.settings', '')
         TARGET_LABELS = config.get('config.targets', [])
+        FORCE_REFRESH = config.get('config.force-refresh', 'false')
 
     def on_server_spawn(self, *args, **kwargs):
         # look through deferred_functions in dash blueprint, find the one with
