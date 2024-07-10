@@ -21,13 +21,13 @@ TEMPLATE = '''
     function initEditors() {
         [...document.getElementsByTagName('textarea')].forEach(txt_elem => {
             if (txt_elem.classList.contains('form-control')) {
-                if({{ target_labels|safe }}) {
+                if ({{ target_labels|safe }}) {
                     let elem = txt_elem.closest('dl.field');
-                    if(!elem) {
+                    if (!elem) {
                         return;
                     };
                     elem = elem.querySelector('dt');
-                    if(!elem || !{{ target_labels|safe }}.includes(elem.innerHTML)) {
+                    if (!elem || !{{ target_labels|safe }}.includes(elem.innerHTML)) {
                         return;
                     };
                 };
